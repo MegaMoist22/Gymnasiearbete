@@ -3,11 +3,11 @@ import { StyleSheet ,View, Text, Button } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import App from '../App';
+//import App from '../App';
 
 const Stack = createStackNavigator();
 
-export let GoalListContext = React.createContext();
+
 function goalScreen({navigation}){
   let [pep,seb] = useState(0);
   //  let Goal = useGoalList();
@@ -19,8 +19,6 @@ function goalScreen({navigation}){
     {name: 'kål', Key: '3'},
   ]);
 
-  GoalListContext = React.createContext(Goal);
-  
   return(
     <View style={styles.container}>
       <Button title="New Goal" onPress={() => navigation.navigate('NewGoal') }/>
@@ -29,7 +27,7 @@ function goalScreen({navigation}){
       {Goal.map((item) =>{
         return(
           <View style={styles.goalBox}>
-          <Text>{item.name}</Text>
+          <Text key={item.key}>{item.name}</Text>
         </View>
         )
       })}
@@ -50,10 +48,9 @@ function newGoal(){
 }
 
 export default class goal extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
+  constructor() {
+    super();
+    console.log("One");
   }
 
   render() {

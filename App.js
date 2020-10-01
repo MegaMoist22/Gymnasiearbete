@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import React, { Component, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { goal, GoalListContext } from './screens/goal';
+import  goal  from './screens/goal';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -27,9 +27,7 @@ function homeStackScreen(){
 
 export default class App extends Component {
   constructor(props) {
-    super(props);
-    this.state = {
-    };
+    super();
     // App.globalgoal = Goal;
     
     // let [Goal,setGoal] = useState([

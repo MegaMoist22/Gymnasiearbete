@@ -15,6 +15,5 @@ export default class GoalContextProvider extends Component {
   
     render() {
       console.log(this.context);
-      return undefined;
     }
   }
