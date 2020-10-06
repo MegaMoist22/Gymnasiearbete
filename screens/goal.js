@@ -1,10 +1,10 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useContext, useEffect } from 'react';
 import { StyleSheet ,View, Text, Button } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 //import App from '../App';
-
+import {GoalContext} from '../App';
 const Stack = createStackNavigator();
 
 
@@ -13,27 +13,25 @@ function goalScreen({navigation}){
   //  let Goal = useGoalList();
   // let Goal = App.globalgoal;
 
-  let [Goal,setGoal] = useState([
-    {name: 'mål', Key: '1'},
-    {name: 'tål', Key: '2'},
-    {name: 'kål', Key: '3'},
-  ]);
-
+  const goal = useContext(GoalContext);//Context TEst seb(pep + 1) 
+  
   return(
     <View style={styles.container}>
       <Button title="New Goal" onPress={() => navigation.navigate('NewGoal') }/>
       <Text>Goal, {pep}</Text>
       <Button title="TEST" onPress={() => seb(pep + 1) }/>
-      {Goal.map((item) =>{
+
+           {goal.map((item) =>{
         return(
-          <View style={styles.goalBox}>
-          <Text key={item.key}>{item.name}</Text>
+          <View style={styles.goalBox} key={item.key}>
+          <Text >{item.name}</Text>
         </View>
         )
       })}
     </View>
   );
 }
+
 
 
 function newGoal(){
