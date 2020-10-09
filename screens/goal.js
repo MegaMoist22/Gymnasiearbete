@@ -4,7 +4,8 @@ import { StyleSheet ,View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 //import App from '../App';
-import {GoalContext} from '../App';
+//import {GoalContext} from '../App';
+import {GoalContext} from '../Contexts/GoalList';
 const Stack = createStackNavigator();
 
 
@@ -13,8 +14,12 @@ function goalScreen({navigation}){
   //  let Goal = useGoalList();
   // let Goal = App.globalgoal;
 
-  const goal = useContext(GoalContext);//Context TEst seb(pep + 1) 
+  const goal = useContext(GoalContext);
+  console.log("1");
+  useEffect(()=> {
+    
   
+  })
   return(
     <View style={styles.container}>
       <Button title="New Goal" onPress={() => navigation.navigate('NewGoal') }/>

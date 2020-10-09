@@ -1,11 +1,10 @@
 import React, { Component, useState } from 'react';
 
-let [Goal,setGoal] = useState([
-  {name: 'mål', Key: '1'},
-  {name: 'tål', Key: '2'},
-  {name: 'kål', Key: '3'},
-]);
-export const GoalContext = React.createContext([Goal, setGoal]);
+const GoalList = [
+  {name: 'Pall', key:'1'},
+  {name: 'pallo', key:'2'}
+];
+export const GoalContext = React.createContext(GoalList);
 
 export default class GoalContextProvider extends Component {
     constructor(props) {

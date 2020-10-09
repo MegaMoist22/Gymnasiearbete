@@ -5,22 +5,33 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { Component, useContext, useState, createContext } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import  goal  from './screens/goal';
+import {GoalContext} from './Contexts/GoalList';
+
+// import * as firebase from 'firebase';
+// import 'firebase/firestore';
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyB2whzjMNORgV02F3NcFPU_s-IhJkFDseE",
+//   authDomain: "gymnasiearbete-2ccea.firebaseapp.com",
+//   databaseURL: "https://gymnasiearbete-2ccea.firebaseio.com",
+//   projectId: "gymnasiearbete-2ccea",
+//   storageBucket: "gymnasiearbete-2ccea.appspot.com",
+//   messagingSenderId: "777995089302",
+//   appId: "1:777995089302:web:90520034f4f55e070419b7",
+//   measurementId: "G-PGRPBP229X"
+// };
+
+//  // Initialize Firebase
+//  if(firebase.apps.length == 0){
+ 
+//   firebase.initializeApp(firebaseConfig);
+//   //firebase.analytics();
+//  }
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const GoalList = [
-  {name: 'Pall', key:'1'},
-  {name: 'pallo', key:'2'}
-];
-export const GoalContext = React.createContext(GoalList);
-// const [Goal,setGoal] = useState([
-//   {name: 'mål', Key: '1'},
-//   {name: 'tål', Key: '2'},
-//   {name: 'kål', Key: '3'},
-// ]);
-
-// const GoalContext = createContext(Goal);
 
 function GoalBox(){
   const goal = useContext(GoalContext);
@@ -64,15 +75,6 @@ function homeStackScreen(){
 export default class App extends Component {
   constructor(props) {
     super();
-    // App.globalgoal = Goal;
-    
-    // let [Goal,setGoal] = useState([
-    //   {name: 'mål', Key: '1'},
-    //   {name: 'tål', Key: '2'},
-    //   {name: 'kål', Key: '3'},
-    // ]);
- 
-
   }
 
 
