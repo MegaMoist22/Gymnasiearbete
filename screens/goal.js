@@ -3,11 +3,16 @@ import { StyleSheet ,View, Text, Button } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-//import App from '../App';
+import App from '../App';
 //import {GoalContext} from '../App';
 import {GoalContext} from '../Contexts/GoalList';
-const Stack = createStackNavigator();
+//import {AddTest} from '../GoalAPI';
+import FireTest from '../GoalAPI';
 
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+
+const Stack = createStackNavigator();
 
 function goalScreen({navigation}){
   let [pep,seb] = useState(0);
@@ -18,11 +23,11 @@ function goalScreen({navigation}){
   console.log("1");
   useEffect(()=> {
     
-  
+    
   })
   return(
     <View style={styles.container}>
-      <Button title="New Goal" onPress={() => navigation.navigate('NewGoal') }/>
+      <Button title="New Goal" onPress={() => navigation.navigate('newGoal') }/>
       <Text>Goal, {pep}</Text>
       <Button title="TEST" onPress={() => seb(pep + 1) }/>
 
@@ -44,11 +49,23 @@ function newGoal(){
         <View style={styles.container}>
           
         <Text>Goal, </Text>
-        <Button title="TEST" />
+        <Button title="TEST" onPress={() => AddUser()}/>
         
       </View>
     );
 }
+getUser = async () => {
+  const userDoc = await firebase.firestore().collection("users").doc("lhSUEsi6xIWH9xmD569B").get();
+  console.log(userDoc);
+}
+
+async function AddUser() {
+  await firebase.firestore().collection("users").doc().add({
+    name: beb,
+
+  });
+}
+
 
 export default class goal extends Component {
   constructor() {
@@ -60,7 +77,7 @@ export default class goal extends Component {
     return (
         <Stack.Navigator>
         <Stack.Screen name="Goals" component={goalScreen}/>
-        <Stack.Screen name="NewGoal" component={newGoal}/>
+        <Stack.Screen name="newGoal" component={newGoal}/> 
       </Stack.Navigator>
     );
   }

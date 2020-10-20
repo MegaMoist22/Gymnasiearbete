@@ -7,26 +7,19 @@ import { StyleSheet, View, Text } from 'react-native';
 import  goal  from './screens/goal';
 import {GoalContext} from './Contexts/GoalList';
 
-// import * as firebase from 'firebase';
-// import 'firebase/firestore';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 
-// const firebaseConfig = {
-//   apiKey: "AIzaSyB2whzjMNORgV02F3NcFPU_s-IhJkFDseE",
-//   authDomain: "gymnasiearbete-2ccea.firebaseapp.com",
-//   databaseURL: "https://gymnasiearbete-2ccea.firebaseio.com",
-//   projectId: "gymnasiearbete-2ccea",
-//   storageBucket: "gymnasiearbete-2ccea.appspot.com",
-//   messagingSenderId: "777995089302",
-//   appId: "1:777995089302:web:90520034f4f55e070419b7",
-//   measurementId: "G-PGRPBP229X"
-// };
-
-//  // Initialize Firebase
-//  if(firebase.apps.length == 0){
- 
-//   firebase.initializeApp(firebaseConfig);
-//   //firebase.analytics();
-//  }
+const firebaseConfig = {
+  apiKey: "AIzaSyB2whzjMNORgV02F3NcFPU_s-IhJkFDseE",
+  authDomain: "gymnasiearbete-2ccea.firebaseapp.com",
+  databaseURL: "https://gymnasiearbete-2ccea.firebaseio.com",
+  projectId: "gymnasiearbete-2ccea",
+  storageBucket: "gymnasiearbete-2ccea.appspot.com",
+  messagingSenderId: "777995089302",
+  appId: "1:777995089302:web:90520034f4f55e070419b7",
+  measurementId: "G-PGRPBP229X"
+};
 
 
 const Tab = createBottomTabNavigator();
@@ -75,6 +68,13 @@ function homeStackScreen(){
 export default class App extends Component {
   constructor(props) {
     super();
+     // Initialize Firebase
+ if(!firebase.apps.length){
+ 
+  firebase.initializeApp(firebaseConfig);
+  //firebase.analytics();
+  console.log("Fire base Initialized!")
+ }
   }
 
 
