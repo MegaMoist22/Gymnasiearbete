@@ -1,8 +1,9 @@
 import React, { Component, View, Text } from 'react';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
+import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 
-const firebaseConfig = {
+const firebaseConfig = { //informationen som behövs för firebase
     apiKey: "AIzaSyB2whzjMNORgV02F3NcFPU_s-IhJkFDseE",
     authDomain: "gymnasiearbete-2ccea.firebaseapp.com",
     databaseURL: "https://gymnasiearbete-2ccea.firebaseio.com",
@@ -43,13 +44,13 @@ export class GoalAPI {
         return snapshot.docs.map(doc => doc.data());
     }
 
-    static async getGoal() {
+    /*static async getGoal() {
         return await firebase.firestore()
             .collection("users")
             .doc("lhSUEsi6xIWH9xmD569B")
             .collection("goals")
             .get();
-    }
+    }*/
 
     static async addGoal(username, goal) {
         await firebase.firestore()
@@ -58,4 +59,30 @@ export class GoalAPI {
             .collection("goals")
             .add({ ...goal });
     }
+
+    static async getUser(username) {
+        return (await firebase.firestore()
+            .collection("users")
+            .doc(username)
+            .get())
+            .data();
+    }
+    // static async addTopKey() {
+    //     await firebase.firestore()
+    //         .collection("users")
+    //         .doc(lhSUEsi6xIWH9xmD569B)
+    //         .update({
+    //             topKey: ++topKey,
+    //         });
+    //     console.log("GINGODINGO")
+    // }
+    static async removeGoal(username,goalID) {
+        return await firebase.firestore()
+            .collection("users")
+            .doc(username)
+            .collection("goals")
+            .doc(goalID)
+            .delete();
+    }
+
 }

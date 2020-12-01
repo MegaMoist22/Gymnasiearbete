@@ -13,7 +13,10 @@ import firebase from 'firebase';
 import 'firebase/firestore';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { Goal } from './models/Goal';
+import GoalPage from './GoalPage';
 import DialogInput from 'react-native-dialog-input';
+import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
+import InputGoal from '../Contexts/InputGoal';
 
 const Stack = createStackNavigator();
 
@@ -22,32 +25,38 @@ class GoalScreen extends Component {
 
   state = {
     goals: [],
-  };
+    user: {},
 
+  };
+  statusNew = false;
+  TESTSTAT = true;
   constructor({ navigation }) {
     super();
     this.navigation = navigation;
 
-    GoalAPI.getAllGoals().then(goals => this.setState({ goals: goals }));
+    GoalAPI.getAllGoals()
+      .then(goals => this.setState({ goals: goals }))
+      .catch(err => console.log(err + "XXXXXXXXXX"));
+    //GoalAPI.getUser("lhSUEsi6xIWH9xmD569B").then(user => this.setState({ user: user }, () => console.log(this.state.user)));
+
   }
-
-  //[pep, seb] = useState(0);
-  //  let Goal = useGoalList();
-  // let Goal = App.globalgoal;
-  //goal = useContext(GoalContext);
-
   render() {
     console.log(this.state.goals);
+
     return (
-      <View style={styles.container}>
-        <Button title="New Goal" onPress={() => this.navigation.navigate('newGoal')} />
+      <View style={styles.GoalContainer}>
+        <Button title="New Goal" onPress={() => this.navigation.navigate('newGoal', null, null)} />
         <Text>Goal</Text>
-        <ScrollView >
-          {this.state.goals.map((item) => {
+        <ScrollView style={{ width: '100%', backgroundColor: "firebrick", }}>
+          {this.state.goals.map((item, i) => {
+            // console.log("i: ", i, " item: ", item)
             return (
-              <View style={styles.goalBox} key={0}>
-                <Text >{item.name}</Text>
-              </View>
+              <Pressable onPress={() => this.navigation.navigate('GoalPage', item, item)} style={styles.goalBox} key={i}>
+
+                <Text>{item.name} {i}</Text>
+
+              </Pressable>
+
             )
           })}
         </ScrollView>
@@ -56,15 +65,28 @@ class GoalScreen extends Component {
   }
 }
 
-export class NewGoalScreen extends Component {
+export class NewGoalScreen extends Component { //GAMMAL TA BORT
   state = {
     title: "",
     isDescriptionDialogVisable: false,
     description: "",
+    user: {},
+    key: "0",
   }
 
   constructor() {
     super();
+    // GoalAPI.getUser("lhSUEsi6xIWH9xmD569B").then(user =>
+    //   this.setState({ user: user }, () => this.setState({ key: user.topKey + 1 })));
+  }
+  addButton() {
+
+    GoalAPI.addGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title, this.state.description)).catch(err => console.log(err))
+  }
+
+  sendInput(inputText) {
+    this.setState({ description: inputText });
+    this.setState({ isDescriptionDialogVisable: false });
   }
 
   render() {
@@ -76,8 +98,9 @@ export class NewGoalScreen extends Component {
             value={this.state.title}
             placeholder="Goal title..."
             onChangeText={(value) => this.setState({ title: value })} />
+
           <View style={{ width: '50%', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Button title="Add" onPress={() => GoalAPI.addGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title)).catch(err => console.log(err))} />
+            <Button title="Add" onPress={() => this.addButton()} />
             <Button title="Description" onPress={() => this.setState({ isDescriptionDialogVisable: true })} />
           </View>
 
@@ -101,6 +124,7 @@ export class NewGoalScreen extends Component {
           title={"Description"}
           message={"Progession description"}
           hintInput={"Description..."}
+          initValueTextInput={this.state.description}
           submitInput={(inputText) => { this.sendInput(inputText) }}
           closeDialog={() => { this.setState({ isDescriptionDialogVisable: false }) }}>
         </DialogInput>
@@ -119,7 +143,8 @@ export default class GoalsComponent extends Component {
     return (
       <Stack.Navigator>
         <Stack.Screen name="Goals" component={GoalScreen} />
-        <Stack.Screen name="newGoal" component={NewGoalScreen} />
+        <Stack.Screen name="newGoal" component={InputGoal} />
+        <Stack.Screen name="GoalPage" component={InputGoal} />
       </Stack.Navigator>
     );
   }
@@ -140,6 +165,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     marginTop: '5%',
     justifyContent: 'center',
+    alignSelf: "center",
   },
   mid: {
     //flex: 1,
@@ -175,5 +201,11 @@ const styles = StyleSheet.create({
     //flex: 1,
     flexDirection: "row",
     //justifyContent: 'center',
+  },
+  GoalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    //justifyContent: 'flex-start',
   },
 });
