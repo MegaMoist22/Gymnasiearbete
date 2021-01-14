@@ -13,7 +13,7 @@ import firebase from 'firebase';
 import 'firebase/firestore';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { Goal } from './models/Goal';
-import GoalPage from './GoalPage';
+//import GoalPage from './GoalPage';
 import DialogInput from 'react-native-dialog-input';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 import InputGoal from '../Contexts/InputGoal';
@@ -35,7 +35,15 @@ class GoalScreen extends Component {
     this.navigation = navigation;
 
     GoalAPI.getAllGoals()
-      .then(goals => this.setState({ goals: goals }))
+      .then(goals => this.setState({
+        goals: goals.map(doc => {
+          return {
+            name: doc.data().name,
+            description: doc.data().description,
+            id: doc.id
+          }
+        })
+      }))
       .catch(err => console.log(err + "XXXXXXXXXX"));
     //GoalAPI.getUser("lhSUEsi6xIWH9xmD569B").then(user => this.setState({ user: user }, () => console.log(this.state.user)));
 

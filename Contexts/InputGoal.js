@@ -15,6 +15,7 @@ export default class InputGoal extends Component {
         description: "",
         user: {},
         key: "0",
+        docID: "",
 
         // layout = {
         //     addButton: "Add",
@@ -34,6 +35,7 @@ export default class InputGoal extends Component {
             this.layout.addButton = "Save";
             this.state.title = item.route.params.name;
             this.state.description = item.route.params.description;
+            this.state.docID = item.route.params.id;
             this.removeButton = <Button title="Remove" onPress={() => this.removeGoal()} />;
         } else {//nYT MÅL
 
@@ -61,14 +63,14 @@ export default class InputGoal extends Component {
         this.setState({ isDescriptionDialogVisable: false });
     }
     removeGoal() {
-        GoalAPI.removeGoal("lhSUEsi6xIWH9xmD569B",)
+        GoalAPI.removeGoal("lhSUEsi6xIWH9xmD569B", this.state.docID)
     }
 
     render() {
         return (
             <View style={styles.back}>
                 <View style={styles.mid}>
-                    <Text>Goal {this.state.title}</Text>
+                    <Text>Goal {this.state.docID}</Text>
                     <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '30%', }}
                         value={this.state.title}
                         placeholder="Goal title..."

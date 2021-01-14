@@ -20,8 +20,10 @@ export class GoalAPI {
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
             //firebase.analytics();
-            console.log("Firebase Initialized!");
-            this.getAllGoals().then(x => console.log(x));
+            console.log("Firebase Initialized!!");
+            this.getAllGoals()
+                .then(x => console.log(x.map(doc => doc.data())));
+            // console.log(this.getAllGoals());
         }
     }
 
@@ -41,7 +43,8 @@ export class GoalAPI {
             .doc("lhSUEsi6xIWH9xmD569B")
             .collection("goals")
             .get();
-        return snapshot.docs.map(doc => doc.data());
+        //return snapshot.docs.map(doc => doc.data());
+        return snapshot.docs;
     }
 
     /*static async getGoal() {
@@ -76,7 +79,7 @@ export class GoalAPI {
     //         });
     //     console.log("GINGODINGO")
     // }
-    static async removeGoal(username,goalID) {
+    static async removeGoal(username, goalID) {
         return await firebase.firestore()
             .collection("users")
             .doc(username)
