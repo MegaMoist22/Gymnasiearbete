@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { View, Text } from "react-native";
 import InputGoal from "../Contexts/InputGoal"
 
+
+
 export default class GoalPage extends Component {
     state = {
         goalData: {},

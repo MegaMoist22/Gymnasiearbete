@@ -46,6 +46,16 @@ export class GoalAPI {
         //return snapshot.docs.map(doc => doc.data());
         return snapshot.docs;
     }
+    static async getAllProgression(goalID) {
+        const snapshot = await firebase.firestore()
+            .collection('users')
+            .doc("lhSUEsi6xIWH9xmD569B")
+            .collection("goals")
+            .doc(goalID)
+            .collection("progressions")
+            .get();
+        return snapshot.docs;
+    }
 
     /*static async getGoal() {
         return await firebase.firestore()
@@ -63,7 +73,7 @@ export class GoalAPI {
             .add({ ...goal });
     }
 
-    static async getUser(username) {
+    static async getUser(username) { //gammal??
         return (await firebase.firestore()
             .collection("users")
             .doc(username)
@@ -86,6 +96,27 @@ export class GoalAPI {
             .collection("goals")
             .doc(goalID)
             .delete();
+    }
+
+    static async editGoal(username, goal, goalID) {
+        await firebase.firestore()
+            .collection("users")
+            .doc(username)
+            .collection("goals")
+            .doc(goalID)
+            .set({ ...goal });
+    }
+
+    static async ProgressionCompleted(username, goalID, progID, countOld) {
+        await firebase.firestore()
+            .collection("users")
+            .doc(username)
+            .collection("goals")
+            .doc(goalID)
+            .collection("progressions")
+            .doc(progID)
+            .update({ count: ++countOld, });
+        console.log("---------------------------------KEKO" + countOld);
     }
 
 }

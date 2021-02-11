@@ -1,5 +1,5 @@
 import React, { Component, useState, useContext, useEffect } from 'react';
-import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Button, TouchableOpacity, Dimensions } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,7 +18,10 @@ import DialogInput from 'react-native-dialog-input';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 import InputGoal from '../Contexts/InputGoal';
 
+
+
 const Stack = createStackNavigator();
+const window = Dimensions.get("window");
 
 class GoalScreen extends Component {
   static contextType = GoalContext;
@@ -54,7 +57,7 @@ class GoalScreen extends Component {
     return (
       <View style={styles.GoalContainer}>
         <Button title="New Goal" onPress={() => this.navigation.navigate('newGoal', null, null)} />
-        <Text>Goal</Text>
+        <Text>Goal {window.height}</Text>
         <ScrollView style={{ width: '100%', backgroundColor: "firebrick", }}>
           {this.state.goals.map((item, i) => {
             // console.log("i: ", i, " item: ", item)
@@ -168,7 +171,8 @@ const styles = StyleSheet.create({
   },
   goalBox: {
     width: '77%',
-    height: '15%',
+    //height: '15%',
+    height: window.height * 0.1,
     alignItems: 'center',
     backgroundColor: 'red',
     marginTop: '5%',
