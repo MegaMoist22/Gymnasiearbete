@@ -22,6 +22,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Nyare version, Man kan lägga till mål osv. "
+    "description": "Man kan lägga till undermål :)"
   }
 }

@@ -9,23 +9,28 @@ import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import useAndroidRippleForView from 'react-native/Libraries/Components/Pressable/useAndroidRippleForView';
 
-
+import { Slider } from 'react-native-elements';
 
 const window = Dimensions.get("window");
 export default class InputGoal extends Component {
 
     state = {
         title: "",
-        isDescriptionDialogVisable: false,
+        isDescriptionDialogVisable: false,//ta bort gammal
         description: "",
         user: {},
         key: "0",
         docID: "",
+        isGoalModalVisable: false,
         isProgModalVisable: false,
+        isProgEditModalVisable: false,
+        sliderVal: 1,
+        activeProgIndex: 0,
 
         progTitle: "",
         progDescription: "",
         progressions: [],
+        ProgNameVar: "LözXD",
 
     }
     layout = {
@@ -63,7 +68,6 @@ export default class InputGoal extends Component {
         // GoalAPI.getUser("lhSUEsi6xIWH9xmD569B").then(user =>
         //   this.setState({ user: user }, () => this.setState({ key: user.topKey + 1 })));
 
-
     }
     addButton() {
         if (this.layout.addButton == "Add") { //add Goal
@@ -83,7 +87,8 @@ export default class InputGoal extends Component {
     }
 
     addProgression() {
-        GoalAPI.addProgression(this.state.docID, new Progression(this.state.progTitle, this.state.progDescription))
+        GoalAPI.addProgression(this.state.docID, new Progression(this.state.progTitle, this.state.progDescription));
+
     }
     ProgressionPress(progID, countA, i) {
         // this.setState({ description: "88888" });
@@ -96,6 +101,13 @@ export default class InputGoal extends Component {
             return item;
         })
         this.setState({ progressions: newCountList });
+        console.log(this.state.progressions[this.state.activeProgIndex].name);
+    }
+
+    ProgressionEdit(i) {
+        this.setState({ activeProgIndex: i });
+        this.setState({ ProgNameVar: this.state.progressions[i].name })
+        this.setState({ isProgEditModalVisable: true });
     }
 
     render() {
@@ -110,7 +122,7 @@ export default class InputGoal extends Component {
 
                     <View style={{ width: '50%', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Button title={this.layout.addButton} onPress={() => this.addButton()} />
-                        <Button title="Description" onPress={() => this.setState({ isDescriptionDialogVisable: true })} />
+                        <Button title="Description" onPress={() => this.setState({ isGoalModalVisable: true })} />
                         {this.removeButton}
                     </View>
 
@@ -126,7 +138,7 @@ export default class InputGoal extends Component {
 
                 <View style={styles.bottom}>
                     <ScrollView style={{ backgroundColor: "lime" }}>
-                        {this.state.progressions.map((item, i) => {
+                        {this.state.progressions.sort((a, b) => a.position - b.position).map((item, i) => {
 
                             return (
                                 <View style={{ backgroundColor: "orange", flexDirection: "row", justifyContent: "flex-end", marginTop: "5%" }} key={i} >
@@ -135,7 +147,7 @@ export default class InputGoal extends Component {
                                         <Text>X </Text>
 
                                     </Pressable>
-                                    <Pressable onPress={() => this.navigation.navigate('GoalPage')} style={styles.goalBox}>
+                                    <Pressable onPress={() => this.ProgressionEdit(i)} style={styles.goalBox}>
 
                                         <Text>{item.name} Count:{item.count}, key: {i}</Text>
 
@@ -148,15 +160,39 @@ export default class InputGoal extends Component {
                     </ScrollView>
                 </View>
 
-                <DialogInput isDialogVisible={this.state.isDescriptionDialogVisable}
+                {/* <DialogInput isDialogVisible={this.state.isDescriptionDialogVisable}
                     title={"Description"}
                     message={"Progession description"}
                     hintInput={"Description..."}
                     initValueTextInput={this.state.description}
                     submitInput={(inputText) => { this.sendInput(inputText) }}
                     closeDialog={() => { this.setState({ isDescriptionDialogVisable: false }) }}>
-                </DialogInput>
+                </DialogInput> */}
 
+                {/* PopUpp Goal, Title/Description */}
+                <Modal transparent={true} visible={this.state.isGoalModalVisable}>
+                    <TouchableOpacity style={{ backgroundColor: "#000000aa", flex: 1, justifyContent: "center" }} onPress={() => this.setState({ isGoalModalVisable: false })}>
+                        <View style={styles.popUpp}>
+                            <Text style={{ alignSelf: "center" }}>Teext</Text>
+                            <TextInput style={styles.modalTextInput1}
+                                value={this.state.title}
+                                placeholder="Goal title..."
+                                onChangeText={(value) => this.setState({ title: value })} />
+
+                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '80%', marginLeft: "5%" }}
+                                multiline
+                                numberOfLines={3}
+                                textAlignVertical="top"
+
+                                value={this.state.description}
+                                placeholder="Goal description..."
+                                onChangeText={(value) => this.setState({ description: value })} />
+                            <Button title="Add" onPress={() => this.addProgression()} />
+
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
+                {/* PopUpp Progression */}
                 <Modal transparent={true} visible={this.state.isProgModalVisable}>
                     <TouchableOpacity style={{ backgroundColor: "#000000aa", flex: 1, justifyContent: "center" }} onPress={() => this.setState({ isProgModalVisable: false })}>
                         <View style={{ backgroundColor: "#ffffff", alignSelf: "center", width: "70%", height: "50%", borderRadius: 5 }}>
@@ -174,6 +210,56 @@ export default class InputGoal extends Component {
                                 value={this.state.progDescription}
                                 placeholder="Progession description..."
                                 onChangeText={(value) => this.setState({ progDescription: value })} />
+
+                            <Slider style={{ width: '80%', marginLeft: "5%" }}
+                                trackStyle={{ height: 10, backgroundColor: 'transparent' }}
+                                thumbStyle={{ height: 35, width: 35, }}
+
+                                value={this.state.sliderVal}
+                                onValueChange={(sliderVal) => this.setState({ sliderVal })}
+                                maximumValue={this.state.progressions.length}
+                                minimumValue={1}
+                                step={1}
+
+                            />
+                            <Text style={{ width: '80%', marginLeft: "5%" }}>Priority: {this.state.sliderVal}</Text>
+                            <Button title="Add" onPress={() => this.addProgression()} />
+
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
+
+                {/* EDIT--PopUpp Progression--EDIT */}
+                <Modal transparent={true} visible={this.state.isProgEditModalVisable}>
+                    <TouchableOpacity style={{ backgroundColor: "#000000aa", flex: 1, justifyContent: "center" }} onPress={() => this.setState({ isProgEditModalVisable: false })}>
+                        <View style={{ backgroundColor: "#ffffff", alignSelf: "center", width: "70%", height: "50%", borderRadius: 5 }}>
+                            <Text style={{ alignSelf: "center" }}>Progression Edit</Text>
+                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '56%', marginLeft: "5%", marginBottom: "5%" }}
+                                value={this.state.ProgNameVar}
+                                placeholder="Progession title..."
+                                onChangeText={(value) => this.setState({ progTitle: value })} />
+
+                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '80%', marginLeft: "5%" }}
+                                multiline
+                                numberOfLines={3}
+                                textAlignVertical="top"
+
+                                value={this.state.progDescription}
+                                placeholder="Progession description..."
+                                onChangeText={(value) => this.setState({ progDescription: value })} />
+
+                            <Slider style={{ width: '80%', marginLeft: "5%" }}
+                                trackStyle={{ height: 10, backgroundColor: 'transparent' }}
+                                thumbStyle={{ height: 35, width: 35, }}
+
+                                value={this.state.sliderVal}
+                                onValueChange={(sliderVal) => this.setState({ sliderVal })}
+                                maximumValue={this.state.progressions.length}
+                                minimumValue={1}
+                                step={1}
+
+                            />
+                            <Text style={{ width: '80%', marginLeft: "5%" }}>Priority: {this.state.sliderVal}</Text>
                             <Button title="Add" onPress={() => this.addProgression()} />
 
                         </View>
@@ -243,4 +329,18 @@ const styles = StyleSheet.create({ // **OBS!** Många styles används inte RENSA
         alignItems: 'center',
         //justifyContent: 'flex-start',
     },
+    popUpp: {
+        backgroundColor: "#ffffff",
+        alignSelf: "center",
+        width: "70%",
+        height: "50%",
+        borderRadius: 5
+    },
+    modalTextInput1: {
+        borderColor: 'gray',
+        borderWidth: 1,
+        width: '56%',
+        marginLeft: "5%",
+        marginBottom: "5%",
+    }
 });
