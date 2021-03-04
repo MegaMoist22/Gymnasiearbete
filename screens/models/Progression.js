@@ -1,8 +1,8 @@
 export class Progression {
-    constructor(name, description) {
+    constructor(name, description, position) {
         this.name = name;
         this.description = description;
         this.count = 0;
-        this.position;
+        this.position = position;
     }
 }

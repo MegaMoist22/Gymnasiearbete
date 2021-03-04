@@ -6,6 +6,7 @@ import React, { Component, useContext, useState, createContext } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import GoalsComponent from './screens/GoalsComponent';
 import { GoalContext } from './Contexts/GoalList';
+import loginScreen from './loginScreen';
 import { GoalAPI } from './GoalAPI';
 
 const Tab = createBottomTabNavigator();
@@ -56,13 +57,13 @@ export default class App extends Component {
     GoalAPI.init();
   }
 
-  createHomeStack = () => {
-    return (
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={homeScreen} />
-      </Stack.Navigator>
-    );
-  };
+  // createHomeStack = () => {
+  //   return (
+  //     <Stack.Navigator>
+  //       <Stack.Screen name="Home" component={homeScreen} />
+  //     </Stack.Navigator>
+  //   );
+  // };
 
   render() {
     return (

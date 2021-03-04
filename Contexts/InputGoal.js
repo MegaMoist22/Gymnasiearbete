@@ -24,7 +24,7 @@ export default class InputGoal extends Component {
         isGoalModalVisable: false,
         isProgModalVisable: false,
         isProgEditModalVisable: false,
-        sliderVal: 1,
+        sliderVal: 0,
         activeProgIndex: 0,
 
         progTitle: "",
@@ -33,6 +33,7 @@ export default class InputGoal extends Component {
         ProgNameVar: "LözXD",
 
     }
+    ProgressionPositions = [];
     layout = {
         addButton: "Add",
 
@@ -53,18 +54,23 @@ export default class InputGoal extends Component {
 
         }
         GoalAPI.getAllProgression(this.state.docID)
-            .then(progressions => this.setState({
-                progressions: progressions.map(doc => {
-                    return {
-                        name: doc.data().name,
-                        description: doc.data().description,
-                        count: doc.data().count,
-                        id: doc.id,
-                    }
-                })
-            }))
+            .then(progressions => {
+                this.setState({
+                    progressions: progressions.map(doc => {
+                        return {
+                            name: doc.data().name,
+                            description: doc.data().description,
+                            count: doc.data().count,
+                            id: doc.id,
+                            position: doc.data().position,
+                        }
+                    })
+                }); this.ProgressionPositions = this.state.progressions; console.log(this.ProgressionPositions)
+            })
 
+        //  this.Absogo88888 = this.state.progressions, console.log(this.Absogo)
 
+        // console.log(this.Absogo);
         // GoalAPI.getUser("lhSUEsi6xIWH9xmD569B").then(user =>
         //   this.setState({ user: user }, () => this.setState({ key: user.topKey + 1 })));
 
@@ -87,7 +93,10 @@ export default class InputGoal extends Component {
     }
 
     addProgression() {
-        GoalAPI.addProgression(this.state.docID, new Progression(this.state.progTitle, this.state.progDescription));
+        GoalAPI.addProgression(this.state.docID, new Progression(this.state.progTitle, this.state.progDescription, this.state.sliderVal));
+
+    }
+    uppdateProgression() {
 
     }
     ProgressionPress(progID, countA, i) {
@@ -102,12 +111,16 @@ export default class InputGoal extends Component {
         })
         this.setState({ progressions: newCountList });
         console.log(this.state.progressions[this.state.activeProgIndex].name);
+
+        console.log(this.state.progressions);
     }
 
     ProgressionEdit(i) {
+
         this.setState({ activeProgIndex: i });
         this.setState({ ProgNameVar: this.state.progressions[i].name })
         this.setState({ isProgEditModalVisable: true });
+        this.setState({ sliderVal: this.ProgressionPositions[i].position });
     }
 
     render() {
@@ -218,7 +231,7 @@ export default class InputGoal extends Component {
                                 value={this.state.sliderVal}
                                 onValueChange={(sliderVal) => this.setState({ sliderVal })}
                                 maximumValue={this.state.progressions.length}
-                                minimumValue={1}
+                                minimumValue={0}
                                 step={1}
 
                             />
@@ -255,12 +268,12 @@ export default class InputGoal extends Component {
                                 value={this.state.sliderVal}
                                 onValueChange={(sliderVal) => this.setState({ sliderVal })}
                                 maximumValue={this.state.progressions.length}
-                                minimumValue={1}
+                                minimumValue={0}
                                 step={1}
 
                             />
                             <Text style={{ width: '80%', marginLeft: "5%" }}>Priority: {this.state.sliderVal}</Text>
-                            <Button title="Add" onPress={() => this.addProgression()} />
+                            <Button title="Add" onPress={() => this.uppdateProgression()} />
 
                         </View>
                     </TouchableOpacity>
