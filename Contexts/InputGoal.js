@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Button, TouchableOpacity, Modal, Dimensions } from "react-native";
+import { StyleSheet, View, Text, Button, TouchableOpacity, Modal, Dimensions, } from "react-native";
 import { Goal } from '../screens/models/Goal';
 import { Progression } from '../screens/models/Progression';
 import FireTest, { addGoal, GoalAPI } from '../GoalAPI';
@@ -10,6 +10,7 @@ import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import useAndroidRippleForView from 'react-native/Libraries/Components/Pressable/useAndroidRippleForView';
 
 import { Slider } from 'react-native-elements';
+import { CheckBox } from 'react-native-elements'
 
 const window = Dimensions.get("window");
 export default class InputGoal extends Component {
@@ -24,6 +25,7 @@ export default class InputGoal extends Component {
         isGoalModalVisable: false,
         isProgModalVisable: false,
         isProgEditModalVisable: false,
+        isDaysModalVisible: false,
         sliderVal: 0,
         activeProgIndex: 0,
 
@@ -31,6 +33,15 @@ export default class InputGoal extends Component {
         progDescription: "",
         progressions: [],
         ProgNameVar: "LözXD",
+
+        checked1: false,
+        checked2: false,
+        checked3: false,
+        checked4: false,
+        checked5: false,
+        checked6: false,
+        checked7: false,
+        days: [],
 
     }
     ProgressionPositions = [];
@@ -41,7 +52,7 @@ export default class InputGoal extends Component {
     removeButton = null;
     constructor(item) {
         super();
-
+        this.navigation = item;
         console.log(item);
         if (item.route.name == "GoalPage") {
             this.layout.addButton = "Save";
@@ -49,6 +60,15 @@ export default class InputGoal extends Component {
             this.state.description = item.route.params.description;
             this.state.docID = item.route.params.id;
             this.removeButton = <Button title="Remove" onPress={() => this.removeGoal()} />;
+            console.log("cCcCcCCCCcCcCC");
+            console.log(item.route.params.days);
+            this.state.checked1 = item.route.params.days[0];
+            this.state.checked2 = item.route.params.days[1];
+            this.state.checked3 = item.route.params.days[2];
+            this.state.checked4 = item.route.params.days[3];
+            this.state.checked5 = item.route.params.days[4];
+            this.state.checked6 = item.route.params.days[5];
+            this.state.checked7 = item.route.params.days[6];
         } else {//nYT MÅL
 
 
@@ -77,10 +97,12 @@ export default class InputGoal extends Component {
     }
     addButton() {
         if (this.layout.addButton == "Add") { //add Goal
-            GoalAPI.addGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title, this.state.description)).catch(err => console.log(err))
+            days = [this.state.checked1, this.state.checked2, this.state.checked3, this.state.checked4, this.state.checked5, this.state.checked6, this.state.checked7]
+            GoalAPI.addGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title, this.state.description, days)).catch(err => console.log(err))
 
         } else { // save Goal
-            GoalAPI.editGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title, this.state.description), this.state.docID)
+            let days = [this.state.checked1, this.state.checked2, this.state.checked3, this.state.checked4, this.state.checked5, this.state.checked6, this.state.checked7]
+            GoalAPI.editGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title, this.state.description, days), this.state.docID)
         }
     }
 
@@ -140,7 +162,9 @@ export default class InputGoal extends Component {
                     </View>
 
                     <View>
-                        <Text>MÅ TI ON TO FR LÖ SÖ</Text>
+                        <Button title="Days" onPress={() => this.setState({ isDaysModalVisible: true })} />
+                        {/* <Button title="Stats" onPress={() => this.navigation.goBack()} /> */}
+
                     </View>
 
                     <TouchableOpacity style={styles.addbutton} onPress={() => this.setState({ isProgModalVisable: true })}>
@@ -278,6 +302,61 @@ export default class InputGoal extends Component {
                         </View>
                     </TouchableOpacity>
                 </Modal>
+                {/* Dagar i veckan */}
+                <Modal transparent={true} visible={this.state.isDaysModalVisible}>
+                    <TouchableOpacity style={{ backgroundColor: "#000000aa", flex: 1, justifyContent: "center" }} onPress={() => this.setState({ isDaysModalVisible: false })}>
+                        <View style={styles.popUppDays}>
+
+                            <CheckBox
+                                title='Monday'
+                                checked={this.state.checked1}
+                                onPress={() => this.setState({ checked1: !this.state.checked1 })}
+
+                            />
+                            <CheckBox
+                                title='Tuesday'
+                                checked={this.state.checked2}
+                                onPress={() => this.setState({ checked2: !this.state.checked2 })}
+
+                            />
+                            <CheckBox
+                                title='Wednesday'
+                                checked={this.state.checked3}
+                                onPress={() => this.setState({ checked3: !this.state.checked3 })}
+
+                            />
+                            <CheckBox
+                                title='Thursday'
+                                checked={this.state.checked4}
+                                onPress={() => this.setState({ checked4: !this.state.checked4 })}
+
+                            />
+
+                            <CheckBox
+                                title='Friday'
+                                checked={this.state.checked5}
+                                onPress={() => this.setState({ checked5: !this.state.checked5 })}
+
+                            />
+                            <CheckBox
+                                title='Saturday'
+                                checked={this.state.checked6}
+                                onPress={() => this.setState({ checked6: !this.state.checked6 })}
+
+                            />
+                            <CheckBox
+                                title='Sunday'
+                                checked={this.state.checked7}
+                                onPress={() => this.setState({ checked7: !this.state.checked7 })}
+
+                            />
+
+
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
+
+
             </View>
         );
     }
@@ -347,6 +426,13 @@ const styles = StyleSheet.create({ // **OBS!** Många styles används inte RENSA
         alignSelf: "center",
         width: "70%",
         height: "50%",
+        borderRadius: 5
+    },
+    popUppDays: {
+        backgroundColor: "#ffffff",
+        alignSelf: "center",
+        width: "70%",
+        height: "70%",
         borderRadius: 5
     },
     modalTextInput1: {

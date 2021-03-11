@@ -16,12 +16,14 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Man kan lägga till undermål :)"
+    "description": "Man kan lägga till undermål :)",
+    "android": {
+      "package": "com.megamoist.gymnasiearbete",
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 1
+    }
   }
 }

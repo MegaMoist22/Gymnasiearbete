@@ -17,6 +17,7 @@ import { Goal } from './models/Goal';
 import DialogInput from 'react-native-dialog-input';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 import InputGoal from '../Contexts/InputGoal';
+import Stats from '../Stats/';
 
 
 
@@ -36,6 +37,8 @@ class GoalScreen extends Component {
   constructor({ navigation }) {
     super();
     this.navigation = navigation;
+    console.log("----------------------------------------------------");
+    console.log(navigation);
 
     GoalAPI.getAllGoals()
       .then(goals => this.setState({
@@ -43,7 +46,8 @@ class GoalScreen extends Component {
           return {
             name: doc.data().name,
             description: doc.data().description,
-            id: doc.id
+            id: doc.id,
+            days: doc.data().days,
           }
         })
       }))
@@ -52,6 +56,7 @@ class GoalScreen extends Component {
 
   }
   render() {
+
     console.log(this.state.goals);
 
     return (
@@ -156,6 +161,7 @@ export default class GoalsComponent extends Component {
         <Stack.Screen name="Goals" component={GoalScreen} />
         <Stack.Screen name="newGoal" component={InputGoal} />
         <Stack.Screen name="GoalPage" component={InputGoal} />
+        <Stack.Screen name="Stats" component={Stats} />
       </Stack.Navigator>
     );
   }
