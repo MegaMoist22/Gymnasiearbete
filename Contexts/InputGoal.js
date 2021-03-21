@@ -12,6 +12,9 @@ import useAndroidRippleForView from 'react-native/Libraries/Components/Pressable
 import { Slider } from 'react-native-elements';
 import { CheckBox } from 'react-native-elements'
 
+import { createStackNavigator } from '@react-navigation/stack';
+import moment from "moment";
+
 const window = Dimensions.get("window");
 export default class InputGoal extends Component {
 
@@ -50,16 +53,20 @@ export default class InputGoal extends Component {
 
     }
     removeButton = null;
+    StatsButton = null;
+
     constructor(item) {
         super();
-        this.navigation = item;
-        console.log(item);
+        this.navigation = item.navigation;
+        console.log("---------------oooooooooooooooooooooooooooooooooo_______________");
+        console.log(item.route.params);
         if (item.route.name == "GoalPage") {
             this.layout.addButton = "Save";
             this.state.title = item.route.params.name;
             this.state.description = item.route.params.description;
             this.state.docID = item.route.params.id;
             this.removeButton = <Button title="Remove" onPress={() => this.removeGoal()} />;
+            this.StatsButton = <Button title="Statso" onPress={() => this.navigation.navigate('Stats', { Data: item.route.params, progressions: this.state.progressions, })} />;
             console.log("cCcCcCCCCcCcCC");
             console.log(item.route.params.days);
             this.state.checked1 = item.route.params.days[0];
@@ -83,9 +90,13 @@ export default class InputGoal extends Component {
                             count: doc.data().count,
                             id: doc.id,
                             position: doc.data().position,
+                            logBook: doc.data().logBook,
                         }
                     })
-                }); this.ProgressionPositions = this.state.progressions; console.log(this.ProgressionPositions)
+                });
+
+                this.ProgressionPositions = this.state.progressions;
+                console.log(this.ProgressionPositions);
             })
 
         //  this.Absogo88888 = this.state.progressions, console.log(this.Absogo)
@@ -97,7 +108,7 @@ export default class InputGoal extends Component {
     }
     addButton() {
         if (this.layout.addButton == "Add") { //add Goal
-            days = [this.state.checked1, this.state.checked2, this.state.checked3, this.state.checked4, this.state.checked5, this.state.checked6, this.state.checked7]
+            let days = [this.state.checked1, this.state.checked2, this.state.checked3, this.state.checked4, this.state.checked5, this.state.checked6, this.state.checked7]
             GoalAPI.addGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title, this.state.description, days)).catch(err => console.log(err))
 
         } else { // save Goal
@@ -123,16 +134,36 @@ export default class InputGoal extends Component {
     }
     ProgressionPress(progID, countA, i) {
         // this.setState({ description: "88888" });
-        GoalAPI.ProgressionCompleted("lhSUEsi6xIWH9xmD569B", this.state.docID, progID, countA);
+        // if (this.state.progressions[i]) {
+
+        // }
+        let daily = {
+            date: moment().format('YYYY-MM-DD'),
+            count: 1,
+        };
+
+        let TESTLOG = [...this.state.progressions[i].logBook];
+        const logBook = this.state.progressions[i].logBook;
+        const lastItem = logBook[logBook.length - 1];
+        if (lastItem && lastItem.date == daily.date.toString()) {
+            ++TESTLOG[TESTLOG.length - 1].count;
+
+        } else {//om den är ny
+            TESTLOG.push(daily);
+        }
+
+        GoalAPI.ProgressionCompleted("lhSUEsi6xIWH9xmD569B", this.state.docID, progID, countA, TESTLOG);
 
         let newCountList = this.state.progressions.map(item => {
             if (item.id == progID) {
-                ++item.count
+                ++item.count;
+                item.logBook = TESTLOG;
             }
             return item;
         })
         this.setState({ progressions: newCountList });
-        console.log(this.state.progressions[this.state.activeProgIndex].name);
+
+        console.log(this.state.progressions[i].name);
 
         console.log(this.state.progressions);
     }
@@ -163,7 +194,7 @@ export default class InputGoal extends Component {
 
                     <View>
                         <Button title="Days" onPress={() => this.setState({ isDaysModalVisible: true })} />
-                        {/* <Button title="Stats" onPress={() => this.navigation.goBack()} /> */}
+                        {this.StatsButton}
 
                     </View>
 

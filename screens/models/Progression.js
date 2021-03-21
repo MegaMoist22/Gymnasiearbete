@@ -4,5 +4,6 @@ export class Progression {
         this.description = description;
         this.count = 0;
         this.position = position;
+        this.logBook = [];
     }
 }

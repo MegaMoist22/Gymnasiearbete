@@ -107,7 +107,7 @@ export class GoalAPI {
             .set({ ...goal });
     }
 
-    static async ProgressionCompleted(username, goalID, progID, countOld) {
+    static async ProgressionCompleted(username, goalID, progID, countOld, testLog) {
         await firebase.firestore()
             .collection("users")
             .doc(username)
@@ -115,7 +115,10 @@ export class GoalAPI {
             .doc(goalID)
             .collection("progressions")
             .doc(progID)
-            .update({ count: ++countOld, });
+            .update({
+                count: ++countOld,
+                logBook: testLog,
+            });
         console.log("---------------------------------KEKO" + countOld);
     }
 
