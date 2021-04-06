@@ -65,8 +65,17 @@ export default class InputGoal extends Component {
             this.state.title = item.route.params.name;
             this.state.description = item.route.params.description;
             this.state.docID = item.route.params.id;
-            this.removeButton = <Button title="Remove" onPress={() => this.removeGoal()} />;
-            this.StatsButton = <Button title="Statso" onPress={() => this.navigation.navigate('Stats', { Data: item.route.params, progressions: this.state.progressions, })} />;
+            // this.removeButton = <Button title="Remove" onPress={() => this.removeGoal()} />;
+
+            this.removeButton = <TouchableOpacity style={styles.TopButtonRow} onPress={() => this.removeGoal()}>
+                <Text style={{ color: "white", }}>Remove</Text>
+            </TouchableOpacity>;
+            //this.StatsButton = <Button title="Statso" onPress={() => this.navigation.navigate('Stats', { Data: item.route.params, progressions: this.state.progressions, })} />;
+
+            this.StatsButton =
+                <TouchableOpacity style={styles.MidButtons} onPress={() => this.navigation.navigate('Stats', { Data: item.route.params, progressions: this.state.progressions, })}>
+                    <Text style={{ color: "white", }}>Stats</Text>
+                </TouchableOpacity>;
             console.log("cCcCcCCCCcCcCC");
             console.log(item.route.params.days);
             this.state.checked1 = item.route.params.days[0];
@@ -77,7 +86,6 @@ export default class InputGoal extends Component {
             this.state.checked6 = item.route.params.days[5];
             this.state.checked7 = item.route.params.days[6];
         } else {//nYT MÅL
-
 
         }
         GoalAPI.getAllProgression(this.state.docID)
@@ -180,44 +188,56 @@ export default class InputGoal extends Component {
         return (
             <View style={styles.back}>
                 <View style={styles.mid}>
-                    <Text>Goal {this.state.docID}</Text>
-                    <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '30%', }}
+                    {/* <Text>Goal {this.state.docID}</Text> */}
+                    <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '30%', borderRadius: 4, marginTop: "2%", }}
                         value={this.state.title}
                         placeholder="Goal title..."
                         onChangeText={(value) => this.setState({ title: value })} />
 
                     <View style={{ width: '50%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Button title={this.layout.addButton} onPress={() => this.addButton()} />
-                        <Button title="Description" onPress={() => this.setState({ isGoalModalVisable: true })} />
+
+                        {/* <Button title={this.layout.addButton} onPress={() => this.addButton()} /> */}
+
+                        <TouchableOpacity style={styles.TopButtonRow} onPress={() => this.addButton()}>
+                            <Text style={{ color: "white", }}>{this.layout.addButton}</Text>
+                        </TouchableOpacity>
+
+                        {/* <Button title="Description" onPress={() => this.setState({ isGoalModalVisable: true })} /> */}
+                        <TouchableOpacity style={styles.TopButtonRow} onPress={() => this.setState({ isGoalModalVisable: true })}>
+                            <Text style={{ color: "white", }}>Description</Text>
+                        </TouchableOpacity>
                         {this.removeButton}
                     </View>
 
-                    <View>
-                        <Button title="Days" onPress={() => this.setState({ isDaysModalVisible: true })} />
+                    <View style={{ flexDirection: "row" }}>
+                        {/* <Button title="Days" onPress={() => this.setState({ isDaysModalVisible: true })} /> */}
+                        <TouchableOpacity style={styles.MidButtons} onPress={() => this.setState({ isDaysModalVisible: true })}>
+                            <Text style={{ color: "white", }}>Days</Text>
+                        </TouchableOpacity>
                         {this.StatsButton}
 
                     </View>
 
-                    <TouchableOpacity style={styles.addbutton} onPress={() => this.setState({ isProgModalVisable: true })}>
-                        <Text>Add progression</Text>
+                    <TouchableOpacity style={styles.addProgression} onPress={() => this.setState({ isProgModalVisable: true })}>
+                        <Text style={{ color: "white", }}>Add progression</Text>
                     </TouchableOpacity>
 
                 </View>
 
                 <View style={styles.bottom}>
-                    <ScrollView style={{ backgroundColor: "lime" }}>
+                    <ScrollView style={{ backgroundColor: "white" }}>
                         {this.state.progressions.sort((a, b) => a.position - b.position).map((item, i) => {
 
                             return (
-                                <View style={{ backgroundColor: "orange", flexDirection: "row", justifyContent: "flex-end", marginTop: "5%" }} key={i} >
-                                    <Pressable android_ripple={{ color: "cyan", radius: 20, borderless: true }} onPress={() => this.ProgressionPress(item.id, item.count, i)} style={{ height: window.height * 0.1, backgroundColor: "lightblue", width: window.height * 0.1, alignSelf: 'center', marginRight: "9%", borderRadius: 15 }} key={i}>
+                                <View style={{ backgroundColor: "white", flexDirection: "row", justifyContent: "flex-end", marginTop: "5%" }} key={i} >
+                                    <Pressable android_ripple={{ color: "cyan", radius: 50, borderless: true }} onPress={() => this.ProgressionPress(item.id, item.count, i)} style={{ height: window.height * 0.1, backgroundColor: "#61DBFF", width: window.height * 0.1, alignSelf: 'center', marginRight: "9%", borderRadius: 15 }} key={i}>
 
-                                        <Text>X </Text>
+
 
                                     </Pressable>
                                     <Pressable onPress={() => this.ProgressionEdit(i)} style={styles.goalBox}>
 
-                                        <Text>{item.name} Count:{item.count}, key: {i}</Text>
+                                        <Text style={{ color: "white" }}>{item.name} Count:{item.count}</Text>
 
                                     </Pressable>
 
@@ -395,6 +415,7 @@ export default class InputGoal extends Component {
 }
 const styles = StyleSheet.create({ // **OBS!** Många styles används inte RENSA SEN!!!
     container: {
+        //8A4FFF
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
@@ -404,16 +425,17 @@ const styles = StyleSheet.create({ // **OBS!** Många styles används inte RENSA
         width: '60%',
         height: window.height * 0.15,
         alignItems: 'center',
-        backgroundColor: 'red',
+        backgroundColor: '#60AFFF',
         //marginTop: '5%',
         justifyContent: 'center',
         //alignSelf: "flex-end",
         marginRight: "5%",
         borderRadius: 8,
+
     },
     mid: {
         //flex: 1,
-        backgroundColor: '#fffbbb',
+        backgroundColor: '#FFF',
         marginLeft: '5%',
         //justifyContent: 'center',
     },
@@ -425,13 +447,13 @@ const styles = StyleSheet.create({ // **OBS!** Många styles används inte RENSA
     },
     back: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: 'white',
 
         //justifyContent: 'center',
     },
     addbutton: {
         //flex: 1,
-        backgroundColor: 'red',
+        backgroundColor: '#DB324D',
         width: '40%',
 
         alignItems: 'center',
@@ -440,6 +462,46 @@ const styles = StyleSheet.create({ // **OBS!** Många styles används inte RENSA
         borderRadius: 8,
         marginBottom: '10%',
         //justifyContent: 'center',
+
+    },
+    TopButtonRow: {
+        //flex: 1,
+
+        backgroundColor: '#DB324D',
+        width: '53%',
+        height: "90%",
+        marginRight: "2%",
+        alignItems: 'center',
+        marginTop: '5%',
+        padding: '3%',
+        borderRadius: 8,
+        //justifyContent: 'center',
+
+    },
+    MidButtons: {
+        //flex: 1,
+        backgroundColor: '#DB324D',
+        width: '40%',
+        marginRight: "2%",
+        alignItems: 'center',
+        marginTop: '5%',
+        padding: '3%',
+        borderRadius: 8,
+        //justifyContent: 'center',
+
+    },
+    addProgression: {
+        //flex: 1,
+        backgroundColor: '#DB324D',
+        width: '40%',
+
+        alignItems: 'center',
+        marginTop: '5%',
+        padding: '3%',
+        borderRadius: 8,
+        marginBottom: '5%',
+        //justifyContent: 'center',
+
     },
     midBottom: {
         //flex: 1,

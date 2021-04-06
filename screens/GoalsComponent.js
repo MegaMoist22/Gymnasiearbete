@@ -61,15 +61,20 @@ class GoalScreen extends Component {
 
     return (
       <View style={styles.GoalContainer}>
-        <Button title="New Goal" onPress={() => this.navigation.navigate('newGoal', null, null)} />
-        <Text>Goal {window.height}</Text>
-        <ScrollView style={{ width: '100%', backgroundColor: "firebrick", }}>
+        {/* <Button title="New Goal" onPress={() => this.navigation.navigate('newGoal', null, null)} /> */}
+        <Pressable onPress={() => this.navigation.navigate('newGoal', null, null)} style={{ width: "40%", height: "10%", backgroundColor: "#DB324D", borderRadius: 10, alignItems: "center", justifyContent: "center", marginTop: "3%" }} android_ripple={{ color: "cyan", radius: 1, borderless: false }}>
+
+          <Text style={{ color: "white", marginLeft: "2%" }}>New Goal</Text>
+
+        </Pressable>
+        {/* <Text>Goal {window.height}</Text> */}
+        <ScrollView style={{ width: '100%', backgroundColor: "white", }}>
           {this.state.goals.map((item, i) => {
             // console.log("i: ", i, " item: ", item)
             return (
-              <Pressable onPress={() => this.navigation.navigate('GoalPage', item, item)} style={styles.goalBox} key={i}>
+              <Pressable onPress={() => this.navigation.navigate('GoalPage', item, item)} style={styles.goalBox} key={i} android_ripple={{ color: "cyan", radius: 1, borderless: false }}>
 
-                <Text>{item.name} {i}</Text>
+                <Text style={{ color: "white", marginLeft: "2%" }}>{item.name}</Text>
 
               </Pressable>
 
@@ -178,12 +183,13 @@ const styles = StyleSheet.create({
   goalBox: {
     width: '77%',
     //height: '15%',
-    height: window.height * 0.1,
-    alignItems: 'center',
-    backgroundColor: 'red',
-    marginTop: '5%',
+    height: window.height * 0.12,
+    alignItems: 'flex-start',
+    backgroundColor: '#60AFFF',
+    marginTop: '3%',
     justifyContent: 'center',
     alignSelf: "center",
+    borderRadius: 7,
   },
   mid: {
     //flex: 1,

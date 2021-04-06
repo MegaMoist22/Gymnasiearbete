@@ -7,6 +7,9 @@ import { StyleSheet, View, Text } from 'react-native';
 import GoalsComponent from './screens/GoalsComponent';
 import { GoalContext } from './Contexts/GoalList';
 import { GoalAPI } from './GoalAPI';
+
+import moment from "moment";
+import { Button } from 'react-native';
 // import { Button } from 'react-native';
 // import * as firebase from 'firebase';
 //import * as GoogleSignIn from 'expo-google-sign-in';
@@ -15,22 +18,30 @@ import { GoalAPI } from './GoalAPI';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+let dayNum = "";
+let fixday = "";
+let dailyGoals = [];
+
 
 function GoalBox() {
   const goal = useContext(GoalContext);
 
   return (
     <View>
-
-      {goal.map((item) => {
+      <Button onPress={() => buttonTest()} title="ss" />
+      {dailyGoals.map((item) => {
         return (
           <View style={styles.goalBox} key={item.key}>
-            <Text >{item.name}</Text>
+            <Text >{item.name} +  {fixday}</Text>
           </View>
         )
       })}
+
     </View>
   );
+}
+function buttonTest() {
+  console.log(dailyGoals);
 }
 //end TEst Context
 function homeScreen() {
@@ -87,14 +98,41 @@ function homeStackScreen() {
 
 export default class App extends Component {
   state = {
-    user: null
+    user: null,
+    goals: [],
+
   };
 
   constructor(props) {
     super();
-
+    dayNum = moment().format('e');
+    this.numberDayFixer();
     GoalAPI.init();
+    GoalAPI.getAllGoals()
+      .then(goals => this.setState({
+        goals: goals.filter(goal => goal.data().days[fixday]).map(doc => {
+          console.log(doc.data())
+          return {
+            name: doc.data().name,
+            description: doc.data().description,
+            id: doc.id,
+            days: doc.data().days,
+          };
+        })
+      }));
+    dailyGoals = this.state.goals;
+    console.log("______________________" + fixday);
+    console.log(dailyGoals);
     // this.unsubscribe = firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
+  }
+
+  numberDayFixer() {
+    if (dayNum >= 1) {
+      fixday = dayNum - 1;
+    } else {
+      fixday = 6;
+    }
+
   }
 
   /*componentDidMount() {

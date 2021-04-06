@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, Button } from 'react-native';
+import { View, Text, Dimensions, Button, Modal, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -70,6 +70,16 @@ const barChartConfig = {
     segments: 3,
 
 };
+const HeatMapchartConfig = {
+    //backgroundGradientFrom: "#1E2923",
+    backgroundGradientFromOpacity: 0,
+    //backgroundGradientTo: "#08130D",
+    backgroundGradientToOpacity: 0,
+    color: (opacity = 1) => `rgba(79, 155, 446, ${opacity})`,
+    strokeWidth: 1, // optional, default 3
+
+    useShadowColorFromDataset: false // optional
+};
 
 
 export default class Stats extends Component {
@@ -106,10 +116,13 @@ export default class Stats extends Component {
             SimpleMonthProg: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,],
 
             ProgressionHeatMap: [],
+            ModalData: [],
 
             //TestProg: [],
             active: true,
             activeWeek: false,
+            isdayModalVisible: false,
+            currentModalDay: "",
 
         };
 
@@ -167,26 +180,31 @@ export default class Stats extends Component {
         this.state.ProgressionWeek = props.route.params.progressions.map((item, Q) => {
             item.logBook.map(dayItem => {
 
-                this.state.ProgressionHeatMap.push({
-                    date: dayItem.date,
-                    count: dayItem.count,
+                if (this.state.ProgressionHeatMap.some(Heat => Heat.date == dayItem.date)) {
+                    this.state.ProgressionHeatMap[this.state.ProgressionHeatMap.findIndex(Heat => Heat.date == dayItem.date)].count += dayItem.count;
 
-                })
+                } else {
+                    this.state.ProgressionHeatMap.push({
+                        date: dayItem.date,
+                        count: dayItem.count,
+
+                    })
+                }
+
 
                 this.state.TotalMonthProg[moment(dayItem.date).format("M") - 1][Q].count += dayItem.count; // Där jag slutade(Inga fel?!)
 
                 this.state.SimpleMonthProg[moment(dayItem.date).format("M") - 1] += dayItem.count;
-                console.log("_____________CCCD " + moment(dayItem.date).format("M"));
-                console.log(this.state.TotalMonthProg);
+
 
                 switch (dayItem.date) {
                     case moment().day(this.state.dayNum).format('YYYY-MM-DD'):
-                        console.log("YE0");
+
 
                         this.state.ProgressionDAY0.map((verificationItem, i) => {
 
                             if (item.id == verificationItem.id) {
-                                console.log("GG " + i + " -- ( " + dayItem.count + " )");
+
                                 verificationItem.count = dayItem.count;
                                 return verificationItem;
                             }
@@ -197,11 +215,11 @@ export default class Stats extends Component {
 
                         break;
                     case moment().day(this.state.dayNum - 1).format('YYYY-MM-DD'):
-                        console.log("YE1");
+
                         this.state.ProgressionDAY1.map((verificationItem, i) => {
 
                             if (item.id == verificationItem.id) {
-                                console.log("1GG " + i + " -- ( " + dayItem.count + " )");
+
                                 verificationItem.count = dayItem.count;
                                 return verificationItem;
                             }
@@ -211,11 +229,11 @@ export default class Stats extends Component {
                         this.state.activeWeek = true;
                         break;
                     case moment().day(this.state.dayNum - 2).format('YYYY-MM-DD'):
-                        console.log("YE2");
+
                         this.state.ProgressionDAY2.map((verificationItem, i) => {
 
                             if (item.id == verificationItem.id) {
-                                console.log("2GG " + i + " -- ( " + dayItem.count + " )");
+
                                 verificationItem.count = dayItem.count;
                                 return verificationItem;
                             }
@@ -224,11 +242,11 @@ export default class Stats extends Component {
                         this.state.activeWeek = true;
                         break;
                     case moment().day(this.state.dayNum - 3).format('YYYY-MM-DD'):
-                        console.log("YE3");
+
                         this.state.ProgressionDAY3.map((verificationItem, i) => {
 
                             if (item.id == verificationItem.id) {
-                                console.log("GG " + i + " -- ( " + dayItem.count + " )");
+
                                 verificationItem.count = dayItem.count;
                                 return verificationItem;
                             }
@@ -237,11 +255,11 @@ export default class Stats extends Component {
                         this.state.activeWeek = true;
                         break;
                     case moment().day(this.state.dayNum - 4).format('YYYY-MM-DD'):
-                        console.log("YE4");
+
                         this.state.ProgressionDAY4.map((verificationItem, i) => {
 
                             if (item.id == verificationItem.id) {
-                                console.log("GG " + i + " -- ( " + dayItem.count + " )");
+
                                 verificationItem.count = dayItem.count;
                                 return verificationItem;
                             }
@@ -249,11 +267,11 @@ export default class Stats extends Component {
                         this.state.TotalWeekProg[4] += dayItem.count;
                         break;
                     case moment().day(this.state.dayNum - 5).format('YYYY-MM-DD'):
-                        console.log("YE5");
+
                         this.state.ProgressionDAY5.map((verificationItem, i) => {
 
                             if (item.id == verificationItem.id) {
-                                console.log("GG " + i + " -- ( " + dayItem.count + " )");
+
                                 verificationItem.count = dayItem.count;
                                 return verificationItem;
                             }
@@ -261,11 +279,11 @@ export default class Stats extends Component {
                         this.state.TotalWeekProg[5] += dayItem.count;
                         break;
                     case moment().day(this.state.dayNum - 6).format('YYYY-MM-DD'):
-                        console.log("YE6");
+
                         this.state.ProgressionDAY6.map((verificationItem, i) => {
 
                             if (item.id == verificationItem.id) {
-                                console.log("GG " + i + " -- ( " + dayItem.count + " )");
+
                                 verificationItem.count = dayItem.count;
                                 return verificationItem;
                             }
@@ -273,11 +291,11 @@ export default class Stats extends Component {
                         this.state.TotalWeekProg[6] += dayItem.count;
                         break;
                     case moment().day(this.state.dayNum - 7).format('YYYY-MM-DD'):
-                        console.log("YE7");
+
                         this.state.ProgressionDAY7.map((verificationItem, i) => {
 
                             if (item.id == verificationItem.id) {
-                                console.log("GG " + i + " -- ( " + dayItem.count + " )");
+
                                 verificationItem.count = dayItem.count;
                                 return verificationItem;
                             }
@@ -285,7 +303,7 @@ export default class Stats extends Component {
                         this.state.TotalWeekProg[7] += dayItem.count;
                         break;
                     default:
-                        console.log("NO," + this.state.date);
+                        //    console.log("NO," + this.state.date);
                         break;
 
                 }
@@ -333,7 +351,6 @@ export default class Stats extends Component {
             ++ii;
         }
 
-        console.log(this.state.ProgressionDAY0);
 
         this.dataBar = { //StackedBarChart
             labels: ["Today", moment().day(this.state.dayNum - 1).format('ddd'), moment().day(this.state.dayNum - 2).format('ddd'), moment().day(this.state.dayNum - 3).format('ddd')],
@@ -423,36 +440,81 @@ export default class Stats extends Component {
                 legendFontSize: 15
             }
         ];
+
+        // this.modalDataPie = [
+        //     {
+        //         name: this.state.ProgressionDAY0[0].name,
+        //         population: this.state.ProgressionDAY0[0].count + this.state.ProgressionDAY1[0].count + this.state.ProgressionDAY2[0].count + this.state.ProgressionDAY3[0].count + this.state.ProgressionDAY4[0].count + this.state.ProgressionDAY7[0].count,
+        //         color: "rgba(599, 122, 234, 1)",
+        //         legendFontColor: "#7F7F7F",
+        //         legendFontSize: 15
+        //     },
+        //     {
+        //         name: this.state.ProgressionDAY0[1].name,
+        //         population: this.state.ProgressionDAY0[1].count + this.state.ProgressionDAY1[1].count + this.state.ProgressionDAY2[1].count + this.state.ProgressionDAY3[1].count + this.state.ProgressionDAY4[1].count + this.state.ProgressionDAY7[1].count,
+        //         color: "#F00",
+        //         legendFontColor: "#7F7F7F",
+        //         legendFontSize: 15
+        //     },]
     }
 
     TestButton() {
-        // console.log(moment().day(this.state.dayNum).format('YYYY-MM-DD'));
-        // console.log(moment().day(this.state.dayNum - 1).format('YYYY-MM-DD'));
-        // console.log(moment().day(this.state.dayNum - 2).format('YYYY-MM-DD'));
-        // console.log(moment().day(this.state.dayNum - 3).format('YYYY-MM-DD'));
-        // console.log(moment().day(this.state.dayNum - 4).format('YYYY-MM-DD'));
-        // console.log(moment().day(this.state.dayNum - 5).format('YYYY-MM-DD'));
-
-
-        // console.log(moment().day(this.state.dayNum - 6).format('YYYY-MM-DD'));
-        // console.log(moment().day(this.state.dayNum - 7).format('YYYY-MM-DD'));
-
-        // console.log(moment().format('YYYY-MM-DD'));moment().day(this.state.dayNum)
-        //console.log(moment().day(7));
-        //console.log(moment().day(this.state.dayNum - 1).format('YYYY-MM-DD'));
-        // console.log(moment("2021-03-13").format('e'));
-        // console.log(moment().day(this.state.date).format('e'));
-        //console.log(this.state.TotalWeekProg[0])
-        // console.log(moment("2021-06-22").format("M"));
-        // console.log(this.state.TotalMonthProg);
-        // console.log("-------------------------------------------------------------------------------==/");
-        // ++this.state.TotalMonthProg[2, 1].count;
-        // console.log(this.state.TotalMonthProg[1][1]);
-        // this.state.TotalMonthProg[2, 1].count
-        // console.log(this.state.ProgressionDAY1[2].count);
-        console.log(this.state.ProgressionList);
-        //console.log(moment.day(0).format('YYYY-MM-DD'));
+        console.log(this.state.ProgressionHeatMap)
     }
+    DayPress(para) {
+
+
+        //console.log(para);
+
+        let TempProgList = [];
+        this.state.ProgressionList.map(item => {
+            item.logBook.map(logItem => {
+
+                if (logItem.date == para.date) {
+                    TempProgList.push({ name: item.name, count: logItem.count })
+                }
+            })
+
+        })
+        this.setState({ ModalData: TempProgList })
+
+
+
+        this.setState({ isdayModalVisible: true });
+        this.setState({ currentModalDay: para.date });
+        console.log(TempProgList);
+    }
+
+    // modalDataPie = [
+    //     {
+    //         name: this.state.ModalData[0].name,
+    //         population: this.state.ModalData[0].count + this.state.ModalData[0].count + this.state.ModalData[0].count + this.state.ModalData[0].count + this.state.ModalData[0].count + this.state.ModalData[0].count,
+    //         color: "rgba(599, 122, 234, 1)",
+    //         legendFontColor: "#7F7F7F",
+    //         legendFontSize: 15
+    //     },
+    //     {
+    //         name: this.state.ModalData[1].name,
+    //         population: this.state.ModalData[1].count + this.state.ModalData[1].count + this.state.ModalData[1].count + this.state.ModalData[1].count + this.state.ModalData[1].count + this.state.ModalData[1].count,
+    //         color: "#F00",
+    //         legendFontColor: "#7F7F7F",
+    //         legendFontSize: 15
+    //     },]
+    modalDataPie = [
+        {
+            name: "this.state.ModalData[0].name",
+            population: 5,
+            color: "rgba(599, 122, 234, 1)",
+            legendFontColor: "#7F7F7F",
+            legendFontSize: 15
+        },
+        {
+            name: "this.state.ModalData[1].name",
+            population: 6,
+            color: "#F00",
+            legendFontColor: "#7F7F7F",
+            legendFontSize: 15
+        },]
 
 
     render() {
@@ -507,10 +569,33 @@ export default class Stats extends Component {
                             numDays={100}
                             width={screenWidth}
                             height={220}
-                            chartConfig={chartConfig}
+                            chartConfig={HeatMapchartConfig}
                             style={{ marginRight: "5%", marginHorizontal: -screenWidth * 0.05 }}
-
+                            onDayPress={(para) => this.DayPress(para)}
                         />
+
+                        <Modal transparent={true} visible={this.state.isdayModalVisible}>
+                            <TouchableOpacity style={{ backgroundColor: "#000000aa", flex: 1, justifyContent: "center" }} onPress={() => this.setState({ isdayModalVisible: false })}>
+                                <View style={styles.popUpp}>
+                                    <Text style={{ alignSelf: "center" }}>Teext</Text>
+
+                                    <PieChart
+                                        data={this.modalDataPie}
+                                        width={screenWidth}
+                                        height={screenHeight * (2 / 5)}
+                                        chartConfig={chartConfig}
+                                        accessor={"population"}
+                                        backgroundColor={"transparent"}
+                                        paddingLeft={"15"}
+
+                                        center={[10, 10]}
+                                    //absolute
+                                    />
+
+
+                                </View>
+                            </TouchableOpacity>
+                        </Modal>
 
                         <Button title="TEst" onPress={() => this.TestButton()} />
                     </ScrollView>
@@ -524,3 +609,14 @@ export default class Stats extends Component {
         );
     }
 }
+const styles = StyleSheet.create({
+    popUpp: {
+        backgroundColor: "#ffffff",
+        alignSelf: "center",
+        width: "70%",
+        height: "50%",
+        borderRadius: 5
+    },
+
+
+})
