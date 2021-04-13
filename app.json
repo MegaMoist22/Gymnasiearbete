@@ -1,14 +1,14 @@
 {
   "expo": {
     "name": "gymnasiearbete",
-    "slug": "gymnasiearbete",
+    "slug": "gymnas iearbete",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fffff0"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -19,7 +19,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Man kan lägga till undermål :)",
+    "description": "DashGoal är en mål app som låter en skapa mål med hjälp av delmål",
     "android": {
       "package": "com.megamoist.gymnasiearbete",
       "googleServicesFile": "./google-services.json",
