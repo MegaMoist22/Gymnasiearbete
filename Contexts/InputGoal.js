@@ -31,6 +31,7 @@ export default class InputGoal extends Component {
         isDaysModalVisible: false,
         sliderVal: 0,
         activeProgIndex: 0,
+        activeProgID: "",
 
         progTitle: "",
         progDescription: "",
@@ -58,9 +59,9 @@ export default class InputGoal extends Component {
     constructor(item) {
         super();
         this.navigation = item.navigation;
-        console.log("---------------oooooooooooooooooooooooooooooooooo_______________");
-        console.log(item.route.params);
-        if (item.route.name == "GoalPage") {
+        // console.log("---------------oooooooooooooooooooooooooooooooooo_______________");
+        //console.log(item.route.params);
+        if (item.route.name == "Goal Page") {
             this.layout.addButton = "Save";
             this.state.title = item.route.params.name;
             this.state.description = item.route.params.description;
@@ -76,8 +77,14 @@ export default class InputGoal extends Component {
                 <TouchableOpacity style={styles.MidButtons} onPress={() => this.navigation.navigate('Stats', { Data: item.route.params, progressions: this.state.progressions, })}>
                     <Text style={{ color: "white", }}>Stats</Text>
                 </TouchableOpacity>;
-            console.log("cCcCcCCCCcCcCC");
-            console.log(item.route.params.days);
+
+
+            this.ProgmodalTest =
+                <TouchableOpacity style={styles.addProgression} onPress={() => this.setState({ isProgModalVisable: true })}>
+                    <Text style={{ color: "white", }}>Add Sub-Goal</Text>
+                </TouchableOpacity>
+            // console.log("cCcCcCCCCcCcCC");
+            //console.log(item.route.params.days);
             this.state.checked1 = item.route.params.days[0];
             this.state.checked2 = item.route.params.days[1];
             this.state.checked3 = item.route.params.days[2];
@@ -104,7 +111,7 @@ export default class InputGoal extends Component {
                 });
 
                 this.ProgressionPositions = this.state.progressions;
-                console.log(this.ProgressionPositions);
+                // console.log(this.ProgressionPositions);
             })
 
         //  this.Absogo88888 = this.state.progressions, console.log(this.Absogo)
@@ -118,10 +125,12 @@ export default class InputGoal extends Component {
         if (this.layout.addButton == "Add") { //add Goal
             let days = [this.state.checked1, this.state.checked2, this.state.checked3, this.state.checked4, this.state.checked5, this.state.checked6, this.state.checked7]
             GoalAPI.addGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title, this.state.description, days)).catch(err => console.log(err))
+            this.navigation.navigate('Goals');
 
         } else { // save Goal
             let days = [this.state.checked1, this.state.checked2, this.state.checked3, this.state.checked4, this.state.checked5, this.state.checked6, this.state.checked7]
             GoalAPI.editGoal("lhSUEsi6xIWH9xmD569B", new Goal(this.state.title, this.state.description, days), this.state.docID)
+            this.navigation.navigate('Goals');
         }
     }
 
@@ -131,20 +140,40 @@ export default class InputGoal extends Component {
     }
     removeGoal() {
         GoalAPI.removeGoal("lhSUEsi6xIWH9xmD569B", this.state.docID);
+        this.navigation.navigate('Goals');
     }
 
     addProgression() {
         GoalAPI.addProgression(this.state.docID, new Progression(this.state.progTitle, this.state.progDescription, this.state.sliderVal));
 
+        GoalAPI.getAllProgression(this.state.docID)
+            .then(progressions => {
+                this.setState({
+                    progressions: progressions.map(doc => {
+                        return {
+                            name: doc.data().name,
+                            description: doc.data().description,
+                            count: doc.data().count,
+                            id: doc.id,
+                            position: doc.data().position,
+                            logBook: doc.data().logBook,
+                        }
+                    })
+                });
+
+                this.ProgressionPositions = this.state.progressions;
+                // console.log(this.ProgressionPositions);
+            })
     }
     uppdateProgression() {
-
+        GoalAPI.EditProgression("lhSUEsi6xIWH9xmD569B", this.state.docID, this.state.activeProgID, this.state.progressions[this.state.activeProgIndex].name, this.state.progressions[this.state.activeProgIndex].description, this.state.progressions[this.state.activeProgIndex].position);
     }
     ProgressionPress(progID, countA, i) {
         // this.setState({ description: "88888" });
         // if (this.state.progressions[i]) {
 
         // }
+
         let daily = {
             date: moment().format('YYYY-MM-DD'),
             count: 1,
@@ -172,16 +201,43 @@ export default class InputGoal extends Component {
         this.setState({ progressions: newCountList });
 
         console.log(this.state.progressions[i].name);
+        console.log(this.state.progressions[i].description);
+        console.log(this.state.progressions[i].position);
 
-        console.log(this.state.progressions);
     }
 
-    ProgressionEdit(i) {
+    ProgressionEdit(i, ProgID) {
 
         this.setState({ activeProgIndex: i });
         this.setState({ ProgNameVar: this.state.progressions[i].name })
         this.setState({ isProgEditModalVisable: true });
         this.setState({ sliderVal: this.ProgressionPositions[i].position });
+        this.setState({ activeProgID: ProgID });
+
+    }
+
+    removeProgression() {
+        GoalAPI.removeProgression("lhSUEsi6xIWH9xmD569B", this.state.docID, this.state.activeProgID);
+
+        GoalAPI.getAllProgression(this.state.docID)
+            .then(progressions => {
+                this.setState({
+                    progressions: progressions.map(doc => {
+                        return {
+                            name: doc.data().name,
+                            description: doc.data().description,
+                            count: doc.data().count,
+                            id: doc.id,
+                            position: doc.data().position,
+                            logBook: doc.data().logBook,
+                        }
+                    })
+                });
+
+                this.ProgressionPositions = this.state.progressions;
+                // console.log(this.ProgressionPositions);
+            })
+
     }
 
     render() {
@@ -218,9 +274,10 @@ export default class InputGoal extends Component {
 
                     </View>
 
-                    <TouchableOpacity style={styles.addProgression} onPress={() => this.setState({ isProgModalVisable: true })}>
+                    {/* <TouchableOpacity style={styles.addProgression} onPress={() => this.setState({ isProgModalVisable: true })}>
                         <Text style={{ color: "white", }}>Add progression</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
+                    {this.ProgmodalTest}
 
                 </View>
 
@@ -230,14 +287,14 @@ export default class InputGoal extends Component {
 
                             return (
                                 <View style={{ backgroundColor: "white", flexDirection: "row", justifyContent: "flex-end", marginTop: "5%" }} key={i} >
-                                    <Pressable android_ripple={{ color: "cyan", radius: 50, borderless: true }} onPress={() => this.ProgressionPress(item.id, item.count, i)} style={{ height: window.height * 0.1, backgroundColor: "#61DBFF", width: window.height * 0.1, alignSelf: 'center', marginRight: "9%", borderRadius: 15 }} key={i}>
+                                    <Pressable android_ripple={{ color: "cyan", radius: 50, borderless: true, }} onPress={() => this.ProgressionPress(item.id, item.count, i)} style={{ height: window.height * 0.1, backgroundColor: "#61DBFF", width: window.height * 0.1, alignSelf: 'center', marginRight: "9%", borderRadius: 15, alignItems: 'center', justifyContent: 'center', }} key={i}>
 
-
+                                        <Text style={{ color: "white", fontSize: 20 }}>{item.count}</Text>
 
                                     </Pressable>
-                                    <Pressable onPress={() => this.ProgressionEdit(i)} style={styles.goalBox}>
+                                    <Pressable onPress={() => this.ProgressionEdit(i, item.id)} style={styles.goalBox}>
 
-                                        <Text style={{ color: "white" }}>{item.name} Count:{item.count}</Text>
+                                        <Text style={{ color: "white" }}>{item.name} </Text>
 
                                     </Pressable>
 
@@ -261,13 +318,13 @@ export default class InputGoal extends Component {
                 <Modal transparent={true} visible={this.state.isGoalModalVisable}>
                     <TouchableOpacity style={{ backgroundColor: "#000000aa", flex: 1, justifyContent: "center" }} onPress={() => this.setState({ isGoalModalVisable: false })}>
                         <View style={styles.popUpp}>
-                            <Text style={{ alignSelf: "center" }}>Teext</Text>
+                            <Text style={{ alignSelf: "center" }}>Description</Text>
                             <TextInput style={styles.modalTextInput1}
                                 value={this.state.title}
                                 placeholder="Goal title..."
                                 onChangeText={(value) => this.setState({ title: value })} />
 
-                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '80%', marginLeft: "5%" }}
+                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '80%', marginLeft: "5%", borderRadius: 5, }}
                                 multiline
                                 numberOfLines={3}
                                 textAlignVertical="top"
@@ -275,7 +332,13 @@ export default class InputGoal extends Component {
                                 value={this.state.description}
                                 placeholder="Goal description..."
                                 onChangeText={(value) => this.setState({ description: value })} />
-                            <Button title="Add" onPress={() => this.addProgression()} />
+
+                            <Pressable onPress={() => this.addButton()} style={{ backgroundColor: "#DB324D", width: "60%", height: "15%", alignSelf: "center", borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: "5%", }} >
+
+                                <Text style={{ color: "white" }}> Save</Text>
+
+                            </Pressable>
+
 
                         </View>
                     </TouchableOpacity>
@@ -284,13 +347,13 @@ export default class InputGoal extends Component {
                 <Modal transparent={true} visible={this.state.isProgModalVisable}>
                     <TouchableOpacity style={{ backgroundColor: "#000000aa", flex: 1, justifyContent: "center" }} onPress={() => this.setState({ isProgModalVisable: false })}>
                         <View style={{ backgroundColor: "#ffffff", alignSelf: "center", width: "70%", height: "50%", borderRadius: 5 }}>
-                            <Text style={{ alignSelf: "center" }}>Teext</Text>
-                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '56%', marginLeft: "5%", marginBottom: "5%" }}
+                            <Text style={{ alignSelf: "center" }}>New Sub-Goal</Text>
+                            <TextInput style={styles.modalTextInput1}
                                 value={this.state.progTitle}
                                 placeholder="Progession title..."
                                 onChangeText={(value) => this.setState({ progTitle: value })} />
 
-                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '80%', marginLeft: "5%" }}
+                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '80%', marginLeft: "5%", borderRadius: 5, }}
                                 multiline
                                 numberOfLines={3}
                                 textAlignVertical="top"
@@ -311,7 +374,13 @@ export default class InputGoal extends Component {
 
                             />
                             <Text style={{ width: '80%', marginLeft: "5%" }}>Priority: {this.state.sliderVal}</Text>
-                            <Button title="Add" onPress={() => this.addProgression()} />
+
+                            <Pressable onPress={() => this.addProgression()} style={{ backgroundColor: "#DB324D", width: "60%", height: "15%", alignSelf: "center", borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: "5%", }} >
+
+                                <Text style={{ color: "white" }}> Add</Text>
+
+                            </Pressable>
+
 
                         </View>
                     </TouchableOpacity>
@@ -322,12 +391,12 @@ export default class InputGoal extends Component {
                     <TouchableOpacity style={{ backgroundColor: "#000000aa", flex: 1, justifyContent: "center" }} onPress={() => this.setState({ isProgEditModalVisable: false })}>
                         <View style={{ backgroundColor: "#ffffff", alignSelf: "center", width: "70%", height: "50%", borderRadius: 5 }}>
                             <Text style={{ alignSelf: "center" }}>Progression Edit</Text>
-                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '56%', marginLeft: "5%", marginBottom: "5%" }}
+                            <TextInput style={styles.modalTextInput1}
                                 value={this.state.ProgNameVar}
                                 placeholder="Progession title..."
                                 onChangeText={(value) => this.setState({ progTitle: value })} />
 
-                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '80%', marginLeft: "5%" }}
+                            <TextInput style={{ borderColor: 'gray', borderWidth: 1, width: '80%', marginLeft: "5%", borderRadius: 5, }}
                                 multiline
                                 numberOfLines={3}
                                 textAlignVertical="top"
@@ -348,7 +417,18 @@ export default class InputGoal extends Component {
 
                             />
                             <Text style={{ width: '80%', marginLeft: "5%" }}>Priority: {this.state.sliderVal}</Text>
-                            <Button title="Add" onPress={() => this.uppdateProgression()} />
+
+
+                            <Pressable onPress={() => this.uppdateProgression()} style={{ backgroundColor: "#DB324D", width: "60%", height: "15%", alignSelf: "center", borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: "5%", }} >
+
+                                <Text style={{ color: "white" }}> Uppdate</Text>
+
+                            </Pressable>
+                            <Pressable onPress={() => this.removeProgression()} style={{ backgroundColor: "#DB324D", width: "60%", height: "15%", alignSelf: "center", borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginTop: "2%", }} >
+
+                                <Text style={{ color: "white" }}> Remove</Text>
+
+                            </Pressable>
 
                         </View>
                     </TouchableOpacity>
@@ -534,5 +614,6 @@ const styles = StyleSheet.create({ // **OBS!** Många styles används inte RENSA
         width: '56%',
         marginLeft: "5%",
         marginBottom: "5%",
+        borderRadius: 5,
     }
 });

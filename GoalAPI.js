@@ -119,7 +119,33 @@ export class GoalAPI {
                 count: ++countOld,
                 logBook: testLog,
             });
-        console.log("---------------------------------KEKO" + countOld);
+
+    }
+    static async EditProgression(username, goalID, progID, name, description, position) {
+        await firebase.firestore()
+            .collection("users")
+            .doc(username)
+            .collection("goals")
+            .doc(goalID)
+            .collection("progressions")
+            .doc(progID)
+            .update({
+                name: name,
+                description: description,
+                position: position,
+            });
+
+    }
+    static async removeProgression(username, goalID, progID) {
+        await firebase.firestore()
+            .collection("users")
+            .doc(username)
+            .collection("goals")
+            .doc(goalID)
+            .collection("progressions")
+            .doc(progID)
+            .delete();
+        console.log("----------------------GIIIGOOO");
     }
 
 }

@@ -53,6 +53,7 @@ const chartConfig = {
     //backgroundGradientTo: "#08130D",
     backgroundGradientToOpacity: 0,
     color: (opacity = 1) => `rgba(26, 155, 146, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     strokeWidth: 1, // optional, default 3
     barPercentage: 0.5,
     useShadowColorFromDataset: false // optional
@@ -63,6 +64,7 @@ const barChartConfig = {
     //backgroundGradientTo: "#08130D",
     backgroundGradientToOpacity: 0,
     color: (opacity = 1) => `rgba(26, 155, 146, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     strokeWidth: 1, // optional, default 3
     barPercentage: 0.9,
     useShadowColorFromDataset: false, // optional
@@ -76,6 +78,7 @@ const HeatMapchartConfig = {
     //backgroundGradientTo: "#08130D",
     backgroundGradientToOpacity: 0,
     color: (opacity = 1) => `rgba(79, 155, 446, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     strokeWidth: 1, // optional, default 3
 
     useShadowColorFromDataset: false // optional
@@ -321,7 +324,7 @@ export default class Stats extends Component {
         let nullWeek = {
             id: "BBB0",
             count: 0.1,
-            name: "Empty2",
+            name: "Empty",
         }
         let i = 0;
         while (i <= 4) {
@@ -362,7 +365,7 @@ export default class Stats extends Component {
                 [this.state.ProgressionDAY3[0].count, this.state.ProgressionDAY3[1].count, this.state.ProgressionDAY3[2].count, this.state.ProgressionDAY3[3].count],
 
             ],
-            barColors: ["#78F4eC", "#0ed6e0", "#1F3dbe", "#1Fa1be"]
+            barColors: ["#DB324D", "#32E875", "#F5B700", "#008BF8"]
         };
 
         // this.dataBar = { //StackedBarChart
@@ -407,36 +410,36 @@ export default class Stats extends Component {
             {
                 name: this.state.ProgressionDAY0[0].name,
                 population: this.state.ProgressionDAY0[0].count + this.state.ProgressionDAY1[0].count + this.state.ProgressionDAY2[0].count + this.state.ProgressionDAY3[0].count + this.state.ProgressionDAY4[0].count + this.state.ProgressionDAY7[0].count,
-                color: "rgba(599, 122, 234, 1)",
-                legendFontColor: "#7F7F7F",
+                color: "#DB324D",
+                legendFontColor: "#DB324D",
                 legendFontSize: 15
             },
             {
                 name: this.state.ProgressionDAY0[1].name,
                 population: this.state.ProgressionDAY0[1].count + this.state.ProgressionDAY1[1].count + this.state.ProgressionDAY2[1].count + this.state.ProgressionDAY3[1].count + this.state.ProgressionDAY4[1].count + this.state.ProgressionDAY7[1].count,
-                color: "#F00",
-                legendFontColor: "#7F7F7F",
+                color: "#32E875",
+                legendFontColor: "#32E875",
                 legendFontSize: 15
             },
             {
                 name: this.state.ProgressionDAY0[2].name,
                 population: this.state.ProgressionDAY0[2].count + this.state.ProgressionDAY1[2].count + this.state.ProgressionDAY2[2].count + this.state.ProgressionDAY3[2].count + this.state.ProgressionDAY4[2].count + this.state.ProgressionDAY7[2].count,
-                color: "purple",
-                legendFontColor: "#7F7F7F",
+                color: "#F5B700",
+                legendFontColor: "#F5B700",
                 legendFontSize: 15
             },
             {
                 name: this.state.ProgressionDAY0[3].name,
                 population: this.state.ProgressionDAY0[3].count + this.state.ProgressionDAY1[3].count + this.state.ProgressionDAY2[3].count + this.state.ProgressionDAY3[3].count + this.state.ProgressionDAY4[3].count + this.state.ProgressionDAY7[3].count,
-                color: "#ffffff",
-                legendFontColor: "#7F7F7F",
+                color: "#008BF8",
+                legendFontColor: "#008BF8",
                 legendFontSize: 15
             },
             {
                 name: this.state.ProgressionDAY0[4].name,
                 population: this.state.ProgressionDAY0[4].count + this.state.ProgressionDAY1[4].count + this.state.ProgressionDAY2[4].count + this.state.ProgressionDAY3[4].count + this.state.ProgressionDAY4[4].count + this.state.ProgressionDAY7[4].count,
-                color: "rgb(0, 0, 255)",
-                legendFontColor: "#7F7F7F",
+                color: "#5438DC",
+                legendFontColor: "#5438DC",
                 legendFontSize: 15
             }
         ];
@@ -461,6 +464,7 @@ export default class Stats extends Component {
     TestButton() {
         console.log(this.state.ProgressionHeatMap)
     }
+    // VIKTIG SPARA ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     DayPress(para) {
 
 
@@ -484,6 +488,8 @@ export default class Stats extends Component {
         this.setState({ currentModalDay: para.date });
         console.log(TempProgList);
     }
+
+    // VIKTIG SPARA ↑↑↑↑↑↑↑↑↑↑↑↑↑
 
     // modalDataPie = [
     //     {
@@ -522,7 +528,7 @@ export default class Stats extends Component {
             <View>
                 {this.state.active == true ? (
                     <ScrollView style={{ width: "100%" }}>
-                        <Text>Weekly Progression {screenHeight} 37,1%</Text>
+                        <Text style={{ alignSelf: "center", fontSize: 17, marginTop: "5%" }}>Weekly Progress </Text>
                         <LineChart
                             data={this.data}
                             width={screenWidth}
@@ -555,7 +561,7 @@ export default class Stats extends Component {
 
                         </View>
 
-                        <Text>Monthly Progression {screenHeight} 37,1%</Text>
+                        <Text style={{ alignSelf: "center", fontSize: 17, marginTop: "5%" }}>Monthly Progress </Text>
                         <LineChart
                             data={this.data2}
                             width={screenWidth}
@@ -571,7 +577,7 @@ export default class Stats extends Component {
                             height={220}
                             chartConfig={HeatMapchartConfig}
                             style={{ marginRight: "5%", marginHorizontal: -screenWidth * 0.05 }}
-                            onDayPress={(para) => this.DayPress(para)}
+                        // onDayPress={(para) => this.DayPress(para)}
                         />
 
                         <Modal transparent={true} visible={this.state.isdayModalVisible}>
@@ -597,7 +603,7 @@ export default class Stats extends Component {
                             </TouchableOpacity>
                         </Modal>
 
-                        <Button title="TEst" onPress={() => this.TestButton()} />
+                        {/* <Button title="TEst" onPress={() => this.TestButton()} /> */}
                     </ScrollView>
                 ) : (
                         <Text>No Proggression yet </Text>

@@ -30,6 +30,7 @@ class GoalScreen extends Component {
   state = {
     goals: [],
     user: {},
+    refreshing: false,
 
   };
   statusNew = false;
@@ -37,8 +38,8 @@ class GoalScreen extends Component {
   constructor({ navigation }) {
     super();
     this.navigation = navigation;
-    console.log("----------------------------------------------------");
-    console.log(navigation);
+    // console.log("----------------------------------------------------");
+    // console.log(navigation);
 
     GoalAPI.getAllGoals()
       .then(goals => this.setState({
@@ -54,25 +55,64 @@ class GoalScreen extends Component {
       .catch(err => console.log(err + "XXXXXXXXXX"));
     //GoalAPI.getUser("lhSUEsi6xIWH9xmD569B").then(user => this.setState({ user: user }, () => console.log(this.state.user)));
 
+
+    // React.useEffect(() => {
+    //   const unsubscribe = navigation.addListener('focus', () => {
+    //     // Screen was focused
+    //     // Do something
+    //     console.log("-------------HÄÄÄÄR-------l----l--------------ll7qdfll-ll-----ll------------")
+    //   });
+
+    //   return unsubscribe;
+    // }, [navigation]);
+
+
   }
+
+  componentDidMount() {
+    this._unsubscribe = this.navigation.addListener('focus', () => {
+      // do something
+      console.log("-------------HÄÄÄÄR-------l----l--------------ll7qdfll-ll-----ll------------")
+      GoalAPI.getAllGoals()
+        .then(goals => this.setState({
+          goals: goals.map(doc => {
+            return {
+              name: doc.data().name,
+              description: doc.data().description,
+              id: doc.id,
+              days: doc.data().days,
+            }
+          })
+        }))
+
+    });
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
+
   render() {
 
-    console.log(this.state.goals);
+    // console.log(this.state.goals);
 
     return (
       <View style={styles.GoalContainer}>
         {/* <Button title="New Goal" onPress={() => this.navigation.navigate('newGoal', null, null)} /> */}
-        <Pressable onPress={() => this.navigation.navigate('newGoal', null, null)} style={{ width: "40%", height: "10%", backgroundColor: "#DB324D", borderRadius: 10, alignItems: "center", justifyContent: "center", marginTop: "3%" }} android_ripple={{ color: "cyan", radius: 1, borderless: false }}>
+        <Pressable onPress={() => this.navigation.navigate('New Goal', null, null)} style={{ width: "40%", height: "10%", backgroundColor: "#DB324D", borderRadius: 10, alignItems: "center", justifyContent: "center", marginTop: "3%" }} android_ripple={{ color: "cyan", radius: 1, borderless: false }}>
 
           <Text style={{ color: "white", marginLeft: "2%" }}>New Goal</Text>
 
         </Pressable>
         {/* <Text>Goal {window.height}</Text> */}
-        <ScrollView style={{ width: '100%', backgroundColor: "white", }}>
+        <ScrollView style={{ width: '100%', backgroundColor: "white", }}
+
+        >
           {this.state.goals.map((item, i) => {
             // console.log("i: ", i, " item: ", item)
             return (
-              <Pressable onPress={() => this.navigation.navigate('GoalPage', item, item)} style={styles.goalBox} key={i} android_ripple={{ color: "cyan", radius: 1, borderless: false }}>
+              <Pressable onPress={() => this.navigation.navigate('Goal Page', item, item)} style={styles.goalBox} key={i} android_ripple={{ color: "cyan", radius: 1, borderless: false }}>
 
                 <Text style={{ color: "white", marginLeft: "2%" }}>{item.name}</Text>
 
@@ -84,6 +124,8 @@ class GoalScreen extends Component {
       </View>
     );
   }
+
+
 }
 
 export class NewGoalScreen extends Component { //GAMMAL TA BORT
@@ -164,8 +206,8 @@ export default class GoalsComponent extends Component {
     return (
       <Stack.Navigator>
         <Stack.Screen name="Goals" component={GoalScreen} />
-        <Stack.Screen name="newGoal" component={InputGoal} />
-        <Stack.Screen name="GoalPage" component={InputGoal} />
+        <Stack.Screen name="New Goal" component={InputGoal} />
+        <Stack.Screen name="Goal Page" component={InputGoal} />
         <Stack.Screen name="Stats" component={Stats} />
       </Stack.Navigator>
     );
