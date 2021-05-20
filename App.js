@@ -91,7 +91,7 @@ class Main extends Component {
   componentDidMount() {
     this._unsubscribe = this.navigation.addListener('focus', () => {
       // do something
-      console.log("-------------HÄÄÄÄR-------l----l--------------ll7qdfll-ll-----ll------------")
+
       GoalAPI.getAllGoals()
         .then(goals => this.setState({
           goals: goals.filter(goal => goal.data().days[fixday]).map(doc => {
